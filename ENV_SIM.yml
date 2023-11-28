@@ -1,4 +1,4 @@
-name: jads_salabim
+name: env_sim
 channels:
   - conda-forge
   - nodefaults
