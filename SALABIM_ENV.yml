@@ -1,4 +1,4 @@
-name: salabim
+name: env_sim
 channels:
   - defaults
 dependencies:
