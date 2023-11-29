@@ -59,4 +59,4 @@ dependencies:
   - pip:
       - greenlet==3.0.1
       - pillow==10.1.0
-      - salabim==23.3.11
+      - salabim==23.3.12

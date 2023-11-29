@@ -149,5 +149,5 @@ dependencies:
   - zeromq=4.3.5=h59595ed_0
   - zipp=3.17.0=pyhd8ed1ab_0
   - pip:
-      - salabim==23.3.11.1
+      - salabim==23.3.12
 prefix: /home/floris/miniforge3/envs/jads_salabim
