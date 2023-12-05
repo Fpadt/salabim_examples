@@ -7,6 +7,20 @@ import numpy as np
 # https://en.wikipedia.org/wiki/Student%27s_t-distribution#Table_of_selected_values
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.t.html
 def t_sd(df, col, confidence_interval, sides="both", decimals=3):
+    """
+    Calculate the mean, confidence interval, standard deviation, and other statistics for a given column in a DataFrame.
+
+    Parameters:
+    - df: DataFrame - The input DataFrame.
+    - col: str - The name of the column of interest.
+    - confidence_interval: float - The desired confidence interval (between 0 and 1).
+    - sides: str - The type of confidence interval. Default is "both".
+    - decimals: int - The number of decimal places to round the results. Default is 3.
+
+    Returns:
+    - DataFrame - A DataFrame containing the calculated statistics.
+
+    """
     if sides != "both":
         ci = confidence_interval
     else:
@@ -46,8 +60,16 @@ def t_sd(df, col, confidence_interval, sides="both", decimals=3):
 
 
 def sim_mean_and_ci(df_sim, col):
-    # Calculate the mean and count for each 'c' group
+    """
+    Calculate the mean and confidence interval for each 'c' group in the given DataFrame.
 
+    Parameters:
+    - df_sim (pandas.DataFrame): The DataFrame containing the data.
+    - col (str): The column name for which to calculate the mean and confidence interval.
+
+    Returns:
+    - pandas.DataFrame: A DataFrame containing the mean and confidence interval for each 'c' group.
+    """
     res = []
     for c in df_sim["c"].unique():
         df_evse = df_sim[df_sim["c"] == c]
@@ -59,7 +81,18 @@ def sim_mean_and_ci(df_sim, col):
     # return results
     return pd.concat(res, axis=0, ignore_index=True)
 
+
+
 def get_mean_with_ci(df_sim):
+    """
+    Calculate the mean and confidence interval for each column in the given DataFrame.
+
+    Parameters:
+    df_sim (DataFrame): The input DataFrame containing simulation data.
+
+    Returns:
+    DataFrame: A DataFrame containing the mean and confidence interval for each column.
+    """
     # Create an empty DataFrame to store the results
     res = []
 
@@ -71,6 +104,16 @@ def get_mean_with_ci(df_sim):
     return pd.concat(res, axis=0, ignore_index=True)
 
 def get_sim_summary(df_sim, output=False):
+    """
+    Get the summary of simulation results.
+
+    Parameters:
+    - df_sim (DataFrame): The simulation results DataFrame.
+    - output (bool): Whether to print the results or not. Default is False.
+
+    Returns:
+    - df_pivot (DataFrame): The summarized results DataFrame.
+    """
     # get the index
     idx = 'c'
 
