@@ -5,7 +5,7 @@ ENV_SIM="env_sim"
 ENV_YML="ENV_SIM.yml"
 PWD=$(pwd)
 
-cd $HOME}/sim/sal_jads
+cd ${HOME}/sim/sal_jads
 
 echo -e "Script to manage Python environment ${ENV_SIM}\n"
 
