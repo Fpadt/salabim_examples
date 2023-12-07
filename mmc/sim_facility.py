@@ -7,12 +7,13 @@ import pandas as pd
 # ------------------------------------------------------------
 # function to run simulation
 def sim_facility(
-    ev_arrival_rate,  # EV's per hour
-    energy_req_rate,  # KW per hour
-    number_of_EVSE=1,  # number of EVSE's
-    sim_time=50000,
+    inter_arr_time_distr,  # inter-arrival time distribution
+    energy_request_distr,  # energy request distribution
+    number_of_EVSE,  # number of EVSE's
+    sim_time,
+    fixed_utilization=False,
     time_unit="minutes",
-    random_seed=123456,
+    random_seed='*',
     run=1,
 ):
     """
@@ -30,6 +31,9 @@ def sim_facility(
     Returns:
         dict: A dictionary containing the simulation results including aggregate statistics.
     """
+    # ------------------------------------------------------------
+    cnv_hr_to_mins = 60
+
     # Generator which creates EV's
     class EV_Generator(sim.Component):
         # setup method is called when the component is created
@@ -42,7 +46,10 @@ def sim_facility(
         def process(self):
             while True:
                 EV()
-                self.hold(inter_arr_time_distr.sample())
+                iat = inter_arr_time_distr.sample()
+                if fixed_utilization:
+                    iat = iat/number_of_EVSE
+                self.hold(iat)
 
     class EV(sim.Component):
         def setup(self):
@@ -91,10 +98,7 @@ def sim_facility(
                 self.hold(charging_time)
                 self.car.activate()
 
-    # Create distributions
-    inter_arr_time_distr = sim.Exponential(60 / ev_arrival_rate)  # minutes between EV's
-    energy_request_distr = sim.Exponential(60 / energy_req_rate)  # minutes to charge EV
-
+    # ------------------------------------------------------------
     # https://www.salabim.org/manual/Reference.html#environment
     app = sim.App(
         trace=False,  # defines whether to trace or not
@@ -127,11 +131,16 @@ def sim_facility(
 
     # waitingline.mode.print_histogram(values=True)
 
+
+    lmbda = cnv_hr_to_mins/inter_arr_time_distr.mean()
+    if fixed_utilization:
+        lmbda = lmbda*number_of_EVSE
+
     # Return results
     return {
         "run": run,
-        "lambda": ev_arrival_rate,
-        "mu": energy_req_rate,
+        "lambda": lmbda,
+        "mu": cnv_hr_to_mins/energy_request_distr.mean(),
         "c": number_of_EVSE,
         "RO": total_evse_lngt / number_of_EVSE,
         "P0": 0,
@@ -147,11 +156,12 @@ def sim_facility(
 
 # returns a DataFrame with the results
 def sim_x_facility(
-    ev_arrival_rate,
-    energy_req_rate,
-    number_of_EVSE=1,
-    sim_time=50000,
-    number_of_simulations=30,
+    inter_arr_time_distr,
+    energy_request_distr,
+    number_of_EVSE,
+    sim_time,
+    fixed_utilization,
+    number_of_simulations,
     verbose=False,
 ):
     """
@@ -175,10 +185,11 @@ def sim_x_facility(
     for i in range(number_of_simulations):
         sim_runs.append(
             sim_facility(
-                ev_arrival_rate=ev_arrival_rate,
-                energy_req_rate=energy_req_rate,
+                inter_arr_time_distr=inter_arr_time_distr,
+                energy_request_distr=energy_request_distr,
                 number_of_EVSE=number_of_EVSE,
                 sim_time=sim_time,
+                fixed_utilization=fixed_utilization,
                 random_seed=i,
                 run=i,
             )
@@ -195,12 +206,12 @@ def sim_x_facility(
 
 # function to run simulation X times per EVSE for all EVSE's
 def sim_x_facility_per_evse(
-    ev_arrival_rate,
-    energy_req_rate,
-    range_of_EVSE=range(1,2),
-    sim_time=50000,
-    number_of_simulations=30,
-    fixed_utilization=True,
+    inter_arr_time_distr,
+    energy_request_distr,
+    range_of_EVSE,
+    sim_time,
+    fixed_utilization,
+    number_of_simulations,
     verbose=False,
 ):
     """
@@ -225,10 +236,11 @@ def sim_x_facility_per_evse(
     for j in range_of_EVSE:
         # Execute simulation
         df = sim_x_facility(
-            ev_arrival_rate=j * ev_arrival_rate if fixed_utilization else ev_arrival_rate,
-            energy_req_rate=energy_req_rate,
+            inter_arr_time_distr=inter_arr_time_distr,
+            energy_request_distr=energy_request_distr,
             number_of_EVSE=j,
             sim_time=sim_time,
+            fixed_utilization=fixed_utilization,
             number_of_simulations=number_of_simulations,
             verbose=verbose,
         )
@@ -243,10 +255,11 @@ def sim_x_facility_per_evse(
 # ------------------------------------------------------------
 
 def simulate_facility(
-        ev_arrival_rate,
-        energy_req_rate,
+        inter_arr_time_distr,
+        energy_request_distr,
         range_of_EVSE,
         sim_time,
+        fixed_utilization,
         number_of_simulations,
         ffn_results=None,
         verbose=True,
@@ -268,10 +281,11 @@ def simulate_facility(
     """
 
     df_total = sim_x_facility_per_evse(
-        ev_arrival_rate=ev_arrival_rate,
-        energy_req_rate=energy_req_rate,
+        inter_arr_time_distr=inter_arr_time_distr,
+        energy_request_distr=energy_request_distr,
         range_of_EVSE=range_of_EVSE,
         sim_time=sim_time,
+        fixed_utilization=fixed_utilization,
         number_of_simulations=number_of_simulations,
         verbose=verbose,
     )
