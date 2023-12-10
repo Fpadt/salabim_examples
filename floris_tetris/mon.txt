@@ -1,0 +1,8 @@
+sim.AnimateQueue(waitingline, x=700, y=100)
+sim.AnimateQueue(in_service, x=1000, y=100)
+sim.AnimateMonitor(waitingline.length, x=20, y=200, width=1000)
+sim.AnimateMonitor(in_service.length, x=20, y=400, width=1000)
+
+env.background_color("20%gray")
+sim.AnimateText("Wash", x=100, y=25, text_anchor="sw")
+sim.AnimateText("Wait", x=200, y=25, text_anchor="sw")

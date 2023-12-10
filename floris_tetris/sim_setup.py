@@ -5,7 +5,6 @@ import time as tm # for timing the simulation
 # Import the simulation modules
 from sim_facility import *
 from sim_analysis import *
-from sim_runs import *
 
 # https://brandfetch.com/enexis.nl?view=library&library=default&collection=colors
 # Enexis colors
