@@ -153,47 +153,12 @@ env = sim.Environment(trace=False)
 env.animate(True)
 env.modelname("Tetris: the game charger")
 env.background_color("20%gray")
-sim.AnimateText("Chargers", x=100, y=15, text_anchor="sw")
-
-power_mon = (
-    EV("ev.1").power_mon
-    + EV("ev.2").power_mon
-    + EV("ev.3").power_mon
-    + EV("ev.4").power_mon
-    + EV("ev.5").power_mon
-    + EV("ev.6").power_mon
-    + EV("ev.7").power_mon
-    + EV("ev.8").power_mon
-    + EV("ev.9").power_mon
-    + EV("ev.10").power_mon
-    + EV("ev.11").power_mon
-    + EV("ev.12").power_mon
-    + EV("ev.13").power_mon
-    + EV("ev.14").power_mon
-    + EV("ev.15").power_mon
-    + EV("ev.16").power_mon
-    + EV("ev.17").power_mon
-    + EV("ev.18").power_mon
-    + EV("ev.19").power_mon
-    + EV("ev.20").power_mon
-)
-sim.AnimateMonitor(
-    power_mon,
-    x=500,
-    y=10,
-    width=500,
-    height=300,
-    horizontal_scale=10,
-    vertical_scale=10,
-    nowcolor="blue",
-)
-
 washers = sim.Resource(name="washers", capacity=evse)
 CarGenerator(ev=ev, spots=spots)
 
 sim.AnimateImage(
     image="floris_tetris/images/parking_wide.png",
-    alpha=0,
+    alpha=40,
     x=0,
     y=0,
     width=2000,
@@ -201,7 +166,7 @@ sim.AnimateImage(
     angle=0,
 )
 
-make_video = False
+make_video = True
 if make_video:
     # env.run(1000)
     # env.animate(do_animate)
@@ -214,7 +179,7 @@ if make_video:
     env.video("tetris.mp4")
     # env.run(15)
     env.video_mode("2d")
-    env.run(sim_time)
+    env.run(20)
     # env.video_mode("screen")
     # env.run(100)
 
