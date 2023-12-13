@@ -18,8 +18,7 @@ evse = 10
 fixed = True
 sim_time = 50
 stay = 10
-
-
+            
 class CarGenerator(sim.Component):
     def setup(self, ev, spots):
         self.ev = ev
@@ -36,6 +35,7 @@ class CarGenerator(sim.Component):
             )
             for loc in range(0, spots)
         ]
+
 
     def process(self):
         car = 0
