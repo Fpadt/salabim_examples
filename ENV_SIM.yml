@@ -260,5 +260,6 @@ dependencies:
   - zlib=1.2.13=hd590300_5
   - zstd=1.5.5=hfc55251_0
   - pip:
+      - opencv-python==4.8.1.78
       - salabim==23.3.12
 prefix: /home/floris/miniforge3/envs/env_sim
