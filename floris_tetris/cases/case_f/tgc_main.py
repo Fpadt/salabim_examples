@@ -20,7 +20,7 @@ class EV(Component):
         self.d_c = d_c  # desired charge
         self.cap = cap  # capacity
         self.mpi = ev_mpi  # max power input
-        self.k = k  # degradation cost
+        self.k = k  # degradation power
         # ----------------------------------
         self.toa = None  # time of arrival
         self.tod = None  # estimated time of departure
