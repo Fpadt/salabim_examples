@@ -1,3 +1,6 @@
+from scipy.optimize import fsolve
+import numpy as np
+
 def cv_pwr(t: float, pm: float, k: float) -> float:
     """
     Calculate the charging power for a given time.

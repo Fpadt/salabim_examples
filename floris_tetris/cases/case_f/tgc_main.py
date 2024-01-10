@@ -46,6 +46,20 @@ class EVSE(Component):
         self.mpo = se_mpo  # max power output
         self.ev = None  # assigned EV
         self.pwr = 0  # negotiated charging power
+    
+    def get_charge_profile(self):
+        if self.ev is None:
+            return None
+        else:
+            return charge_profile(
+            dur=self.ev.stay, 
+            soc=self.ev.soc,
+            d_c=self.ev.d_c,
+            cap=self.ev.cap,
+            ev_mpi=self.ev.mpi,
+            se_mpo=self.mpo,
+            k=self.ev.k,
+    )
 
     def process(self):
         while True:
@@ -97,6 +111,18 @@ class TGC(Component):
                   rem: {evse.remaining_duration()} sch: {evse.scheduled_time()}"
             )
 
+    def print_charge(self, evse):
+        if evse.ev is None:
+            print(f"{env.now()}\t - NO_EV/{evse.name()} ")
+        else:
+            #   toa: {evse.ev.toa} - tod: {evse.ev.tod} -  \
+            print(
+                evse.get_charge_profile()
+                # f"{env.now()}\t - {evse.ev.name()}/{evse.name()} - pwr: {evse.pwr}\
+                #   dc: {round(evse.ev.dc)} - ckwh: {round(evse.ev.ckwh)} - \
+                #   rem: {evse.remaining_duration()} sch: {evse.scheduled_time()}"
+            )            
+
     def assign_power(self):
         # self.request((ENX,0))
         # self.release(ENX)
@@ -114,7 +140,8 @@ class TGC(Component):
     def process(self):
         while True:
             self.assign_power()
-            [self.print_state(x) for x in HUB]
+            # [self.print_state(x) for x in HUB]
+            [self.print_charge(x) for x in HUB]            
 
             self.standby()
 
