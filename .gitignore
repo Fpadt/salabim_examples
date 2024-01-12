@@ -1,2 +1,5 @@
 mmc/__pycache__/*.pyc
 floris_tetris/__pycache__/*.pyc
+floris_tetris/cases/case_f/package/__pycache__/*.pyc
+floris_tetris/cases/case_f/package/subpackage/__pycache__/*.pyc
+

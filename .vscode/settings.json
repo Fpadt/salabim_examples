@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./floris_tetris/cases/case_f/package/subpackage"
+    ]
+}
