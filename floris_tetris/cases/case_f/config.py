@@ -24,6 +24,7 @@ EV_MPI = 7  #               EV max Power input for each time period
 EX_MPO = m * r * SE_MPO  #  enexis max Power output for each time period (constant)
 CAP = 70  #                 EV max capacity of battery
 K = 0.075  #                EV battery degradation cost per kWh
+
 # --------------------------------------------------------------------------
 
 soc_l = 0.0  #              lower bound of state of charge
@@ -35,6 +36,10 @@ dur_h = 8.0  #              upper bound of parking duration
 eng_l = 0.3  #              lower bound of energy price
 eng_h = 0.6  #              upper bound of energy price
 p_rnd = True  #             will energyprice be random of linear
+
+# --------------------------------------------------------------------------
+# olp specific
+# --------------------------------------------------------------------------
 
 alpha = 1.0  #              EVSE efficiency
 beta = 1.0  #               customer satisfaction
