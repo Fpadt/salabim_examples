@@ -1,4 +1,4 @@
-from salabim import *
+    "SRT": "rtc",  #         to be tested, dynamic - shortest remaining time       from salabim import *
 
 
 class EV(Component):
@@ -160,13 +160,16 @@ class TGC(Component):
 env = Environment(trace=False, random_seed=42)
 
 RLS = {
-    "EDD": "tod",  #         tested and Ok
-    "LDD": "-tod",  #        tested and Ok
-    "FIFO": "toa",  #        tested and Ok
-    "LIFO": "-toa",  #       tested and Ok
-    "SPT": "t2c",  #         tested and Ok
-    "LPT": "-t2c",  #        tested and Ok        
-    "LLX": "llx",
+    "EDD": "tod",  #         tested and Ok, static
+    "LDD": "-tod",  #        tested and Ok, static
+    "FIFO": "toa",  #        tested and Ok, static
+    "LIFO": "-toa",  #       tested and Ok, static
+    "SPT": "t2c",  #         tested and Ok, static
+    "LPT": "-t2c",  #        tested and Ok, static
+    "SRT": "rtc",  #         to be tested, dynamic - shortest remaining time       
+    "LRT": "-rtc",  #        to be tested, dynamic - longest  remaining time       
+    "LLX": "llx", #          tested and ok, static
+    "RLX": "rlx", #          to be tested, dynamic - remaining laxity
 }
 RUL = "LLX"
 
