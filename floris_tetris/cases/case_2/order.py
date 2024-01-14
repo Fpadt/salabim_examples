@@ -1,4 +1,4 @@
-    "SRT": "rtc",  #         to be tested, dynamic - shortest remaining time       from salabim import *
+from salabim import *
 
 
 class EV(Component):
@@ -10,12 +10,16 @@ class EV(Component):
         self.toa = None  #   time of arrival
         self.tod = None  #   time of departure (estimated)
         self.dsc = dsc  #    desired state of charge in kWh
-        self.csc = 0  #      current state f charge
+        # self.csc = 0  #      current state f charge
         self.t2c = dsc/mpi # estimated time to charge
         self.llx = None  #   least Laxity
         # --- Monitors ---
         self.mon_kwh = Monitor(name="EV kWh", level=True)
         self.mon_dur = Monitor(name="EV Dur", level=False)
+    
+    @property
+    def state_of_charge(self):
+        return self.mon_kwh.duration(ex0=True) * self.mon_kwh.mean(ex0=True)
 
     def process(self):
         # enter the waiting line
@@ -44,6 +48,10 @@ class EVSE(Component):
         self.ev = None  #    EV being charged
         # --- Monitors ---
         self.mon_kwh = Monitor(name="SE kWh", level=True)
+
+    @property
+    def utilization(self):
+        return 100 * self.mon_kwh.mean(ex0=False)/self.mpo
 
     def update_energy_charged(self):
         self.mon_kwh.tally(self.pwr)
@@ -105,7 +113,7 @@ class TGC(Component):
         else:
             #   toa: {evse.ev.toa} - tod: {evse.ev.tod} -  \
             print(
-                f"""{env.now()}\t{evse.ev.name()}/{evse.name()}\tcsc: {evse.ev.csc}"""
+                f"""{env.now()}\t{evse.ev.name()}/{evse.name()}\tcsc: {evse.ev.state_of_charge}"""
                 # \tpwr: {evse.pwr}\tdsc: {round(evse.ev.dsc)}  rem: {evse.remaining_duration()}\tsch: {evse.scheduled_time()}"""
             )
 
@@ -174,13 +182,13 @@ RLS = {
 RUL = "LLX"
 
 ENX_MPO = 1 * 7
-enx = env.Resource("enx", capacity=ENX_MPO, anonymous=False)
+# enx = env.Resource("enx", capacity=ENX_MPO, anonymous=False)
 
 HUB = [EVSE(mpo=7) for _ in range(3)]
 
-EV1 = EV(dur=20, dsc=140, mpi=7)
+EV1 = EV(dur=40, dsc=140, mpi=7)
 EV2 = EV(dur=50, dsc=280, mpi=7)
-EV3 = EV(dur=70, dsc=290, mpi=7)
+EV3 = EV(dur=70, dsc=490, mpi=7)
 
 TGC(name="TGC")
 
@@ -196,21 +204,20 @@ for ev in EVS:
     print(f"\n{ev.name()}")
     ev.mon_kwh.print_statistics()
     print(f"EV kWh: {ev.mon_kwh.duration(ex0=True) * ev.mon_kwh.mean(ex0=True)}")
+    print(f"soc: {ev.state_of_charge}")
     # print(ev.mon_kwh.as_dataframe())
     # print(
     #     f"{ev.name()} - dsc: {ev.dsc} - csc: {ev.csc} - toa: {ev.toa} - tod: {ev.tod}"
     # )
 
-# for evse in HUB:
-#     print(f"\n{evse.name()}")
-#     evse.mon_kwh.print_statistics()
-#     print(f"SE kWh: {evse.mon_kwh.duration(ex0=False) * evse.mon_kwh.mean(ex0=False)}")
-# print(f"test: {evse.mon_kwh.duration_zero()}")
-# print(f"tot: {tot}")
-
-# print(evse.mon_kwh.as_dataframe())
-# print(
-#     f"{evse.name()} - pwr: {evse.pwr} "
-# )
+for evse in HUB:
+    print(f"\n{evse.name()}")
+    evse.mon_kwh.print_statistics()
+    print(f"SE kWh: {evse.mon_kwh.duration(ex0=False) * evse.mon_kwh.mean(ex0=False)}")
+    print(f"utilization: {evse.utilization}")
+    # print(evse.mon_kwh.as_dataframe())
+    # print(
+    #     f"{evse.name()} - pwr: {evse.pwr} "
+    # )
 
 # what if request is leass than time to charge TODO
