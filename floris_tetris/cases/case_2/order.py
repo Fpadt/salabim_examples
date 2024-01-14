@@ -25,7 +25,7 @@ class EV(Component):
                 evse.activate()
                 break
         self.passivate()
-        self.mon_kwh.tally(0)        
+        self.mon_kwh.tally(0)
         # register EV in list for Reporting
         self.register(EVS)
 
@@ -44,11 +44,9 @@ class EVSE(Component):
         # --- Monitors ---
         self.mon_kwh = Monitor(name="SE kWh", level=True)
 
-
     def update_energy_charged(self):
         self.mon_kwh.tally(self.pwr)
         self.ev.mon_kwh.tally(self.pwr)
-
 
     def process(self):
         while True:
@@ -122,10 +120,8 @@ class TGC(Component):
         for evse in HUB:
             if evse.ev is not None:
                 # note first update power next energy
-                evse.pwr = min([evse.mpo, evse.ev.mpi]) 
+                evse.pwr = min([evse.mpo, evse.ev.mpi])
                 evse.update_energy_charged()
-            
-          
 
     def process(self):
         while True:
@@ -137,10 +133,9 @@ class TGC(Component):
             self.standby()  # makes it run every event
 
 
-
 # --------------------------------------------------------------------------
 # Simulation
-# --------------------------------------------------------------------------                        
+# --------------------------------------------------------------------------
 env = Environment(trace=False, random_seed=42)
 
 ENX_MPO = 3 * 7
@@ -164,7 +159,8 @@ env.run()
 for ev in EVS:
     print(f"\n{ev.name()}")
     ev.mon_kwh.print_statistics()
-    print(ev.mon_kwh.as_dataframe())
+    print(f"EV kWh: {ev.mon_kwh.duration(ex0=True) * ev.mon_kwh.mean(ex0=True)}")
+    # print(ev.mon_kwh.as_dataframe())
     # print(
     #     f"{ev.name()} - dsc: {ev.dsc} - csc: {ev.csc} - toa: {ev.toa} - tod: {ev.tod}"
     # )
@@ -172,7 +168,11 @@ for ev in EVS:
 for evse in HUB:
     print(f"\n{evse.name()}")
     evse.mon_kwh.print_statistics()
-    print(evse.mon_kwh.as_dataframe())    
+    print(f"SE kWh: {evse.mon_kwh.duration(ex0=False) * evse.mon_kwh.mean(ex0=False)}")
+    # print(f"test: {evse.mon_kwh.duration_zero()}")
+    # print(f"tot: {tot}")
+
+    # print(evse.mon_kwh.as_dataframe())
     # print(
     #     f"{evse.name()} - pwr: {evse.pwr} "
     # )
